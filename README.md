@@ -1,50 +1,72 @@
-# 技嘉 B460M AORUS PRO 黑苹果 EFI
+# B460M AORUS PRO OpenCore 黑苹果 EFI
 
-这是一个为技嘉 B460M AORUS PRO 主板，搭配英特尔 i5-10400 处理器设计的 OpenCore 1.0.4 EFI 配置。
+此EFI配置适用于技嘉 B460M AORUS PRO 主板搭配英特尔酷睿 i5-10400 处理器的黑苹果系统。
 
-## 系统配置
+## 硬件配置
 
 - 主板: 技嘉 B460M AORUS PRO
-- 处理器: 英特尔 Core i5-10400
-- 内存: 64GB DDR4 (英睿达 + 金士顿)
+- CPU: 英特尔 Core i5-10400 @ 2.90GHz 六核
+- 内存: 64 GB (英睿达 DDR4 3200MHz 16GB x 2 / 金士顿 DDR4 3200MHz 16GB x 2)
 - 显卡: 英特尔 UHD Graphics 630
 - 硬盘: 三星 SSD 970 EVO Plus 1TB
-- 声卡: 瑞昱 @ 英特尔 High Definition Audio 控制器
-- 有线网卡: 英特尔 Ethernet Connection I219-V
 - 无线网卡: Broadcom 802.11ac Network Adapter BCM94360Z4
 
-## 使用说明
+## 完成EFI配置步骤
 
-1. 将此EFI文件夹复制到您的引导分区中
-2. 根据 `missing_files.txt` 中的说明，下载或生成所需的缺失文件
-3. 使用 OpenCore 配置器或文本编辑器调整 `config.plist` 中的序列号和其他细节
-4. 重启电脑进入 BIOS 设置:
-   - 禁用 CFG Lock
-   - 禁用 VT-d
-   - 禁用 CSM
-   - 启用 XHCI Hand-off
-   - 将 DVMT Pre-Allocated 设置为 64MB
+### 1. 下载所需的ACPI文件
 
-## 工作状态
+将以下ACPI文件下载并放置到 `EFI/OC/ACPI/` 目录下：
 
-当完成所有缺失文件的补充后，您可以期待以下功能正常工作:
+- [SSDT-PLUG.aml](https://github.com/dortania/Getting-Started-With-ACPI/raw/master/extra-files/compiled/SSDT-PLUG-DRTNIA.aml) - 处理器电源管理
+- [SSDT-EC.aml](https://github.com/dortania/Getting-Started-With-ACPI/raw/master/extra-files/compiled/SSDT-EC-DESKTOP.aml) - 仿冒嵌入式控制器
+- [SSDT-AWAC.aml](https://github.com/dortania/Getting-Started-With-ACPI/raw/master/extra-files/compiled/SSDT-AWAC.aml) - RTC 修复
 
-- [x] 英特尔 UHD 630 图形加速
-- [x] 音频输出
-- [x] 有线网络
-- [x] 无线网络和蓝牙 (BCM94360Z4 免驱)
-- [x] USB 端口
-- [x] 睡眠/唤醒
-- [x] iMessage 和 FaceTime (需正确设置三码)
+### 2. 下载所需的Kext驱动
 
-## 注意事项
+将以下驱动下载并放置到 `EFI/OC/Kexts/` 目录下：
 
-- 首次启动时，建议添加启动参数 `-v` 以查看详细的启动信息
-- 如遇到引导问题，尝试添加 `keepsyms=1 debug=0x100` 参数
-- 安装完成后，建议重新生成一套新的三码 (MLB、ROM、序列号)
+- [Lilu.kext](https://github.com/acidanthera/Lilu/releases) - 必要的内核补丁平台
+- [VirtualSMC.kext](https://github.com/acidanthera/VirtualSMC/releases) - 仿冒SMC
+  - 同时还需要下载以下传感器插件:
+    - SMCProcessor.kext
+    - SMCSuperIO.kext
+- [WhateverGreen.kext](https://github.com/acidanthera/WhateverGreen/releases) - 显卡补丁
+- [AppleALC.kext](https://github.com/acidanthera/AppleALC/releases) - 声卡驱动
+- [IntelMausi.kext](https://github.com/acidanthera/IntelMausi/releases) - 英特尔有线网卡驱动
+- [AirportBrcmFixup.kext](https://github.com/acidanthera/AirportBrcmFixup/releases) - 博通无线网卡驱动
 
-## 参考资料
+### 3. 创建USB映射驱动
 
-- [OpenCore 安装指南](https://dortania.github.io/OpenCore-Install-Guide/)
-- [OpenCore 参考手册](https://dortania.github.io/docs/latest/Configuration.html)
-- [Comet Lake 配置指南](https://dortania.github.io/OpenCore-Install-Guide/config.plist/comet-lake.html) 
+使用Hackintool工具创建一个定制的USBPorts.kext，并放置到 `EFI/OC/Kexts/` 目录下。
+
+### 4. 生成唯一的SMBIOS信息
+
+使用[GenSMBIOS](https://github.com/corpnewt/GenSMBIOS)工具为你的配置生成唯一的SMBIOS信息：
+
+1. 下载并运行GenSMBIOS
+2. 选择"Generate SMBIOS"选项
+3. 输入型号"iMac20,1"
+4. 生成的信息复制到config.plist文件的PlatformInfo > Generic部分
+
+### 5. 资源文件（可选）
+
+如果需要图形化的启动界面，下载[OcBinaryData资源文件](https://github.com/acidanthera/OcBinaryData)，并将Resources文件夹复制到 `EFI/OC/` 目录下。
+
+## 特别说明
+
+1. 本配置已针对技嘉B460M AORUS PRO主板和i5-10400处理器优化
+2. 声卡使用alcid=1参数，如果音频不工作，可以尝试其他布局ID
+3. 确保在BIOS中禁用CFG-Lock，以获得更好的性能
+4. 如果遇到启动问题，可以尝试在boot-args中添加-v参数进入啰嗦模式排查
+
+## 问题解决
+
+如果你遇到以下问题，可以尝试这些解决方案：
+
+- **找不到引导项**：确保在BIOS中禁用安全启动，并将UEFI设为首选启动模式
+- **显示器黑屏**：尝试在config.plist中添加igfxonln=1到boot-args
+- **睡眠唤醒问题**：添加swd_panic=1到boot-args
+
+## 版本历史
+
+- 2025.03.27: 初始版本，基于OpenCore 0.7.9 
