@@ -8,8 +8,8 @@
 2. config.plist已经正确配置，适用于B460M AORUS PRO主板和i5-10400处理器
 3. 所有必要的Kext驱动文件已经复制到EFI/OC/Kexts/目录
 4. 已创建基本的USBPorts.kext结构
-5. 已复制OcBinaryData的图形界面资源文件并启用相关配置
-6. 已启用开机音效支持
+5. 已复制OcBinaryData的图形界面资源文件
+6. 已修正BootProtect设置，增强兼容性
 
 ## 仍需完成的步骤
 
@@ -22,7 +22,18 @@
 3. 输入型号: iMac20,1
 4. 将生成的信息复制到config.plist中的PlatformInfo > Generic部分
 
-### 2. BIOS设置
+### 2. 启用图形界面（可选）
+
+如果你想使用图形界面，需要执行以下步骤：
+
+1. 下载最新版OpenCore，从中获取OpenCanopy.efi文件
+2. 复制OpenCanopy.efi到EFI/OC/Drivers/目录
+3. 在config.plist中修改：
+   - 将PickerMode从"Builtin"改为"External"
+   - 在Drivers数组中添加"OpenCanopy.efi"
+   - 可选：启用AudioSupport和PlayChime以获得开机音效
+
+### 3. BIOS设置
 
 在启动安装前，确保BIOS做出以下设置：
 
@@ -32,7 +43,7 @@
 - XHCI Hand-off: 启用
 - 安全启动: 禁用
 
-### 3. 安装后的配置
+### 4. 安装后的配置
 
 安装完成macOS后，你需要进行以下配置：
 
