@@ -1,72 +1,65 @@
-# B460M AORUS PRO OpenCore 黑苹果 EFI
+# B460M OpenCore Hackintosh
 
-此EFI配置适用于技嘉 B460M AORUS PRO 主板搭配英特尔酷睿 i5-10400 处理器的黑苹果系统。
+这是一个基于OpenCore引导的Hackintosh项目，专门为B460M主板配置。
 
 ## 硬件配置
 
-- 主板: 技嘉 B460M AORUS PRO
-- CPU: 英特尔 Core i5-10400 @ 2.90GHz 六核
-- 内存: 64 GB (英睿达 DDR4 3200MHz 16GB x 2 / 金士顿 DDR4 3200MHz 16GB x 2)
-- 显卡: 英特尔 UHD Graphics 630
-- 硬盘: 三星 SSD 970 EVO Plus 1TB
-- 无线网卡: Broadcom 802.11ac Network Adapter BCM94360Z4
+- 主板：B460M
+- 处理器：Intel 10代处理器
+- 显卡：Intel核显
+- 声卡：Realtek ALC1220
+- 网卡：板载网卡
 
-## 完成EFI配置步骤
+## 系统要求
 
-### 1. 下载所需的ACPI文件
+- macOS版本：支持macOS 11.0及以上版本
+- OpenCore版本：0.8.0及以上
 
-将以下ACPI文件下载并放置到 `EFI/OC/ACPI/` 目录下：
+## 目录结构
 
-- [SSDT-PLUG.aml](https://github.com/dortania/Getting-Started-With-ACPI/raw/master/extra-files/compiled/SSDT-PLUG-DRTNIA.aml) - 处理器电源管理
-- [SSDT-EC.aml](https://github.com/dortania/Getting-Started-With-ACPI/raw/master/extra-files/compiled/SSDT-EC-DESKTOP.aml) - 仿冒嵌入式控制器
-- [SSDT-AWAC.aml](https://github.com/dortania/Getting-Started-With-ACPI/raw/master/extra-files/compiled/SSDT-AWAC.aml) - RTC 修复
+```
+.
+├── EFI
+│   └── OC
+│       ├── ACPI
+│       ├── Drivers
+│       ├── Kexts
+│       ├── OpenCore.efi
+│       └── config.plist
+└── README.md
+```
 
-### 2. 下载所需的Kext驱动
+## 主要功能
 
-将以下驱动下载并放置到 `EFI/OC/Kexts/` 目录下：
+- 支持Intel核显驱动
+- 支持Realtek ALC1220声卡
+- 支持USB端口映射
+- 支持电源管理
+- 支持睡眠/唤醒功能
 
-- [Lilu.kext](https://github.com/acidanthera/Lilu/releases) - 必要的内核补丁平台
-- [VirtualSMC.kext](https://github.com/acidanthera/VirtualSMC/releases) - 仿冒SMC
-  - 同时还需要下载以下传感器插件:
-    - SMCProcessor.kext
-    - SMCSuperIO.kext
-- [WhateverGreen.kext](https://github.com/acidanthera/WhateverGreen/releases) - 显卡补丁
-- [AppleALC.kext](https://github.com/acidanthera/AppleALC/releases) - 声卡驱动
-- [IntelMausi.kext](https://github.com/acidanthera/IntelMausi/releases) - 英特尔有线网卡驱动
-- [AirportBrcmFixup.kext](https://github.com/acidanthera/AirportBrcmFixup/releases) - 博通无线网卡驱动
+## 使用说明
 
-### 3. 创建USB映射驱动
+1. 将EFI文件夹复制到ESP分区
+2. 使用OpenCore Configurator打开config.plist
+3. 根据您的具体硬件配置修改相关参数
+4. 保存配置并重启
 
-使用Hackintool工具创建一个定制的USBPorts.kext，并放置到 `EFI/OC/Kexts/` 目录下。
+## 注意事项
 
-### 4. 生成唯一的SMBIOS信息
+- 首次安装时请确保BIOS设置正确
+- 建议在安装前备份重要数据
+- 如遇到问题，请检查config.plist中的配置是否正确
 
-使用[GenSMBIOS](https://github.com/corpnewt/GenSMBIOS)工具为你的配置生成唯一的SMBIOS信息：
+## 更新日志
 
-1. 下载并运行GenSMBIOS
-2. 选择"Generate SMBIOS"选项
-3. 输入型号"iMac20,1"
-4. 生成的信息复制到config.plist文件的PlatformInfo > Generic部分
+### v1.0.0
+- 初始版本发布
+- 支持基本功能配置
 
-### 5. 资源文件（可选）
+## 贡献指南
 
-如果需要图形化的启动界面，下载[OcBinaryData资源文件](https://github.com/acidanthera/OcBinaryData)，并将Resources文件夹复制到 `EFI/OC/` 目录下。
+欢迎提交Issue和Pull Request来帮助改进这个项目。
 
-## 特别说明
+## 许可证
 
-1. 本配置已针对技嘉B460M AORUS PRO主板和i5-10400处理器优化
-2. 声卡使用alcid=1参数，如果音频不工作，可以尝试其他布局ID
-3. 确保在BIOS中禁用CFG-Lock，以获得更好的性能
-4. 如果遇到启动问题，可以尝试在boot-args中添加-v参数进入啰嗦模式排查
-
-## 问题解决
-
-如果你遇到以下问题，可以尝试这些解决方案：
-
-- **找不到引导项**：确保在BIOS中禁用安全启动，并将UEFI设为首选启动模式
-- **显示器黑屏**：尝试在config.plist中添加igfxonln=1到boot-args
-- **睡眠唤醒问题**：添加swd_panic=1到boot-args
-
-## 版本历史
-
-- 2025.03.27: 初始版本，基于OpenCore 0.7.9 
+MIT License 
