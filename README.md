@@ -5,12 +5,12 @@
 ## 🖥️ 硬件配置
 
 - 🏢 主板：技嘉 B460M AORUS PRO
-- 💻 处理器：英特尔 Core i5-10400 @ 2.90GHz 六核
+- 💻 处理器：英特尔 Core i5-10400
 - 💾 内存：64 GB ( 英睿达 DDR4 3200MHz 16GB x 2 / 金士顿 DDR4 3200MHz 16GB x 2 )
 - 💽 硬盘：三星 SSD 970 EVO Plus 1TB
-- 📡 网卡：Broadcom BCM943602Z4 无线网卡
-- 🔊 声卡：瑞昱 ALC1220-VB 声卡
-- 🎮 显卡：Intel核显
+- 📡 网卡：博通 BCM943602Z4 无线网卡
+- 🔊 声卡：瑞昱 ALC1220-VB 声卡（主板自带的声卡）
+- 🎮 显卡：Intel核显 UHD 630
 
 ## ⚙️ 系统要求
 
