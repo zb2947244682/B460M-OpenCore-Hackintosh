@@ -15,7 +15,7 @@
 ## ⚙️ 系统要求
 
 - 🍎 macOS版本：支持 macOS Sonoma 14.3.2
-- �� OpenCore版本：1.0.3
+- 🛠️ OpenCore版本：1.0.3
 
 ## 📁 目录结构
 
